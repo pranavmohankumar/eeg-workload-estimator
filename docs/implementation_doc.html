@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project #4 Implementation Document - Non-Invasive EEG Cognitive Workload & Micro-State Estimator</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; background-color: #f8fafc; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #0f172a; font-size: 24px; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-top: 0; }
+        h2 { color: #1e40af; font-size: 18px; margin-top: 25px; }
+        .badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; margin-bottom: 15px; }
+        .box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 15px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        pre { background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+        footer { margin-top: 40px; font-size: 12px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="badge">Project #4 Specification</span>
+        <h1>Non-Invasive EEG Cognitive Workload & Micro-State Estimator</h1>
+        <p><strong>Target Industry Profile:</strong> Kernel, Emotiv, Consumer Wearable Divisions</p>
+        
+        <h2>1. System Architecture & Concept</h2>
+        <div class="box">
+            <p>Streaming bandpass filtering engine, Welch power spectral density feature extractor, and Random Forest micro-state classifier.</p>
+        </div>
+
+        <h2>2. Synthetic Bio-Data Engineering Strategy</h2>
+        <p>8-channel synthetic EEG stream mixing Alpha (8-12Hz), Beta (13-30Hz), and Theta (4-7Hz) rhythms with EOG artifact injection.</p>
+
+        <h2>3. Low-End LLM Prompt & Module Blueprint</h2>
+        <ul>
+            <li><strong>Module 1: Synthetic EEG Generator:</strong> Generate multi-channel EEG signals with controllable band power ratios and ocular artifacts.</li>
+            <li><strong>Module 2: Real-time PSD & Band Power Extractor:</strong> Compute rolling Welch PSD across Theta, Alpha, and Beta frequency bands.</li>
+            <li><strong>Module 3: Workload Classifier & State Estimator:</strong> Train Random Forest model to predict high/low cognitive fatigue states.</li>
+        </ul>
+
+        <h2>4. Core Technical Starter Skeleton</h2>
+        <pre><code>import numpy as np
+from scipy.signal import welch
+
+def extract_eeg_features(eeg_data, fs=256):
+    # eeg_data shape: (channels, samples)
+    features = []
+    for ch in range(eeg_data.shape[0]):
+        freqs, psd = welch(eeg_data[ch], fs=fs, nperseg=fs)
+        theta = np.trapz(psd[(freqs>=4) & (freqs<=7)])
+        alpha = np.trapz(psd[(freqs>=8) & (freqs<=12)])
+        beta = np.trapz(psd[(freqs>=13) & (freqs<=30)])
+        features.extend([theta, alpha, beta, beta / (alpha + 1e-6)])
+    return np.array(features)
+</code></pre>
+
+        <footer>
+            <p>Neurotech Technical Blueprint | Prepared for Pranav Mohankumar | UIUC Neural Engineering</p>
+        </footer>
+    </div>
+</body>
+</html>
